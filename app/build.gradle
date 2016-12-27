@@ -1,0 +1,55 @@
+buildscript {
+    repositories {
+        //        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+        // can be removed with android-gradle plugin is upgraded to 2.2
+        // https://twitter.com/JakeWharton/status/760836175586267136
+        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+    }
+
+    // Exclude the lombok version that the android plugin depends on.
+    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.zepp.www.rxjavaexample"
+        minSdkVersion 18
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+
+    compile 'io.reactivex:rxjava:1.2.4'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.3'
+}
