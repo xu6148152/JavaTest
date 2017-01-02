@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -44,12 +45,23 @@ import rx.Subscription;
 import rx.observables.BlockingObservable;
 import rx.observables.ConnectableObservable;
 import rx.observables.MathObservable;
-import rx.observables.SyncOnSubscribe;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
+import rx.schedulers.TestScheduler;
+import rx.subjects.AsyncSubject;
+import rx.subjects.BehaviorSubject;
+import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
+import rx.subjects.TestSubject;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class) public class RxJava1UnitTest {
     static Integer[] integers = new Integer[9];
@@ -69,48 +81,24 @@ import static org.junit.Assert.fail;
     }
 
     @Test public void testCreateObservable() {
-        Observable.create(new SyncOnSubscribe<Object, Object>() {
-            @Override protected Object generateState() {
-                return null;
-            }
-
-            @Override protected Object next(Object state, Observer<? super Object> observer) {
-                observer.onNext(state);
-                observer.onCompleted();
-                return state;
-            }
-        }).subscribe(new Subscriber<Object>() {
-            @Override public void onCompleted() {
-
-            }
-
-            @Override public void onError(Throwable e) {
-
-            }
-
-            @Override public void onNext(Object o) {
-
-            }
-        });
-        //Observable.create(subscriber -> {
-        //    System.out.println("subscriber");
-        //    if (!subscriber.isUnsubscribed()) {
-        //        subscriber.onNext(subscriber);
-        //        subscriber.onCompleted();
-        //    }
-        //}).subscribe(new Subscriber<Object>() {
-        //    @Override public void onCompleted() {
-        //        System.out.println("onCompleted");
+        //Observable.create(new SyncOnSubscribe<Object, Object>() {
+        //    @Override protected Object generateState() {
+        //        return null;
         //    }
         //
-        //    @Override public void onError(Throwable e) {
-        //        System.out.println("onError");
+        //    @Override protected Object next(Object state, Observer<? super Object> observer) {
+        //        observer.onNext(state);
+        //        observer.onCompleted();
+        //        return state;
         //    }
-        //
-        //    @Override public void onNext(Object o) {
-        //        System.out.println("onNext");
-        //    }
-        //});
+        //}).subscribe(mSubscriber);
+        Observable.create(subscriber -> {
+            System.out.println("subscriber");
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onNext(subscriber);
+                subscriber.onCompleted();
+            }
+        }).subscribe(mSubscriber);
     }
 
     @Test public void testDeferObservable() {
@@ -532,7 +520,16 @@ import static org.junit.Assert.fail;
     }
 
     @Test public void testScan() {
-        Observable.just(1, 2, 3, 4, 5).scan((sum, value) -> sum + value).subscribe(integer -> System.out.println("Sum: " + integer));
+        Observable.just(1, 2, 3, 4, 5).observeOn(Schedulers.io()).map(integer -> {
+            System.out.println("current thread: " + Thread.currentThread().getName());
+            return integer;
+        }).observeOn(Schedulers.computation()).flatMap(integer -> {
+            System.out.println("current thread: " + Thread.currentThread().getName());
+            return Observable.just(integer);
+        }).observeOn(Schedulers.io()).scan((sum, value) -> {
+            System.out.println("current thread: " + Thread.currentThread().getName());
+            return sum + value;
+        }).toBlocking().subscribe(integer -> System.out.println("Sum: " + integer + " current thread: " + Thread.currentThread().getName()));
     }
 
     @Test public void testGroupBy() {
@@ -666,9 +663,139 @@ import static org.junit.Assert.fail;
                   .subscribe(integer -> System.out.println("Got: " + integer + " (" + Thread.currentThread().getName() + ")"));
     }
 
-    @Test public void testSubjects() {
+    @Test public void testSubject() {
+        final TestScheduler scheduler = new TestScheduler();
 
+        scheduler.advanceTimeTo(100, TimeUnit.SECONDS);
+        final TestSubject<Object> subject = TestSubject.create(scheduler);
+        final Observer observer = mock(Observer.class);
+        subject.subscribe(observer);
+        subject.onNext(1);
+        scheduler.triggerActions();
+
+        verify(observer, times(1)).onNext(1);
     }
+
+    @Test public void testAsyncSubject() {
+        final AsyncSubject<Object> subject = AsyncSubject.create();
+        final Observer observer = mock(Observer.class);
+        subject.subscribe(observer);
+
+        subject.onNext("first");
+        subject.onNext("second");
+        subject.onNext("third");
+        subject.onCompleted();
+
+        verify(observer, times(1)).onNext(anyString());
+        verify(observer, never()).onError(new Throwable());
+        verify(observer, times(1)).onCompleted();
+    }
+
+    @Test public void testBehaviorSubject() {
+        final BehaviorSubject<Object> subject = BehaviorSubject.create("default");
+        final Observer observerA = mock(Observer.class);
+        final Observer observerB = mock(Observer.class);
+        final Observer observerC = mock(Observer.class);
+
+        //final Observer observerA = new Observer() {
+        //    @Override public void onCompleted() {
+        //
+        //    }
+        //
+        //    @Override public void onError(Throwable e) {
+        //
+        //    }
+        //
+        //    @Override public void onNext(Object o) {
+        //        System.out.println("observerA " + o);
+        //    }
+        //};
+        //
+        //final Observer observerB = new Observer() {
+        //    @Override public void onCompleted() {
+        //
+        //    }
+        //
+        //    @Override public void onError(Throwable e) {
+        //
+        //    }
+        //
+        //    @Override public void onNext(Object o) {
+        //        System.out.println("observerB " + o);
+        //    }
+        //};
+
+        final InOrder inOrder = inOrder(observerA, observerB, observerC);
+
+        //subject.onNext("one");
+        //subject.onNext("two");
+        //final InOrder inOrderB = inOrder(observerB);
+        //final InOrder inOrderC = inOrder(observerC);
+
+        final Subscription subscribeA = subject.subscribe(observerA);
+        final Subscription subscribeB = subject.subscribe(observerB);
+        //final Subscription subscribeC = subject.subscribe(observerC);
+
+
+        inOrder.verify(observerA).onNext("default");
+        inOrder.verify(observerB).onNext("default");
+
+        subject.onNext("one");
+
+        inOrder.verify(observerA).onNext("one");
+
+        //inOrder.verify(observerA).onNext("one");
+        //inOrder.verify(observerA).onNext("two");
+        //inOrderB.verify(observerB).onNext("default");
+        //inOrderA.verify(observerA).onNext("default");
+
+        //subject.onNext("one");
+        //subject.onNext("two");
+        //subject.onNext("three");
+
+        //inOrder.verify(observer, times(1)).onNext("two");
+        //verify(observer, times(1)).onNext("default");
+        //verify(observer, times(1)).onNext("one");
+        //verify(observer, times(1)).onNext("two");
+        //verify(observer, times(1)).onNext("three");
+
+
+        //verifyNoMoreInteractions(observer);
+    }
+
+    @Test public void testPublishSubject() {
+        final PublishSubject<Object> subject = PublishSubject.create();
+        final Observer observer = mock(Observer.class);
+
+        subject.onNext("one");
+        subject.onNext("two");
+
+        subject.subscribe(observer);
+
+        subject.onNext("three");
+
+        verify(observer, never()).onNext("one");
+        verify(observer, never()).onNext("two");
+        verify(observer, times(1)).onNext("three");
+    }
+
+    @Test public void testReplaySubject() {
+        final ReplaySubject<Object> subject = ReplaySubject.create();
+        final Observer observer = mock(Observer.class);
+
+        subject.onNext("one");
+        subject.onNext("two");
+
+        subject.subscribe(observer);
+
+        subject.onNext("three");
+
+        verify(observer, times(1)).onNext("one");
+        verify(observer, times(1)).onNext("two");
+        verify(observer, times(1)).onNext("three");
+    }
+
+
 
     class MySubscriber extends Subscriber<Object> {
         private CountDownLatch mCountDownLatch;

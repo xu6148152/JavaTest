@@ -23,5 +23,14 @@ package com.zepp.www.rxjavaexample;
 //         .............................................  
 //                  佛祖镇楼                  BUG辟易 
 
+import org.junit.Before;
+import org.mockito.MockitoAnnotations;
+
 public class RxJava2UnitTest {
+
+    @Before public void before() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+
 }
