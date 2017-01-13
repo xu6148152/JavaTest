@@ -42,8 +42,25 @@ public class CyclicBarrierTest extends TestBase {
     }
 
     @Test public void testCyclicBarrier1() {
-        CyclicBarrier cyclicBarrier = new CyclicBarrier(1, new MyAction());
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(2, new MyAction());
+        CountDownLatch countDownLatch = new CountDownLatch(1);
         assertEquals(0, cyclicBarrier.getNumberWaiting());
+        Thread thread = new Thread(() -> {
+            try {
+                cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+            countDownLatch.countDown();
+        });
+        thread.start();
+        try {
+            cyclicBarrier.await();
+            countDownLatch.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+        System.out.println(countAction);
     }
 
     @Test public void testTwoParties() throws Exception {

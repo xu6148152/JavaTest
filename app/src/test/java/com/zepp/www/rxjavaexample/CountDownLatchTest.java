@@ -31,7 +31,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class) public class CountDownLatchTest extends TestBase{
 
@@ -95,10 +94,6 @@ import static org.junit.Assert.assertTrue;
         l.countDown();
         assertEquals(0, l.getCount());
         awaitTermination(t, 1000);
-    }
-
-    private void assertThreadStaysAlive(Thread thread) {
-        assertTrue(thread.isAlive());
     }
 
     @Test
