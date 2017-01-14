@@ -24,6 +24,10 @@ package com.zepp.www.rxjavaexample;
 //                  佛祖镇楼                  BUG辟易 
 
 import android.annotation.SuppressLint;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.Permission;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,6 +46,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -393,15 +398,46 @@ public class TestBase {
             try {
                 q.element();
                 shouldThrow();
-            } catch (NoSuchElementException success) {}
+            } catch (NoSuchElementException success) {
+            }
             try {
                 q.iterator().next();
                 shouldThrow();
-            } catch (NoSuchElementException success) {}
+            } catch (NoSuchElementException success) {
+            }
             try {
                 q.remove();
                 shouldThrow();
-            } catch (NoSuchElementException success) {}
-        } catch (InterruptedException fail) { threadUnexpectedException(fail); }
+            } catch (NoSuchElementException success) {
+            }
+        } catch (InterruptedException fail) {
+            threadUnexpectedException(fail);
+        }
+    }
+
+    <T> T serialClone(T o) {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(serialBytes(o)));
+            T clone = (T) ois.readObject();
+            assertSame(o.getClass(), clone.getClass());
+            return clone;
+        } catch (Throwable fail) {
+            threadUnexpectedException(fail);
+            return null;
+        }
+    }
+
+    byte[] serialBytes(Object o) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(o);
+            oos.flush();
+            oos.close();
+            return bos.toByteArray();
+        } catch (Throwable fail) {
+            threadUnexpectedException(fail);
+            return new byte[0];
+        }
     }
 }
