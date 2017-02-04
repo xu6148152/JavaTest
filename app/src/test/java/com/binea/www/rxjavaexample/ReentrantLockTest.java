@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 07/01/2017.
 //                            _ooOoo_  
@@ -28,7 +28,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import org.junit.Test;
 
-public class ReentrantLockTest extends TestBase {
+public class ReentrantLockTest extends BaseTest {
     private final ReentrantLock lock = new ReentrantLock();
     /** Condition to wait on until tripped */
     private final Condition trip = lock.newCondition();

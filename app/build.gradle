@@ -21,8 +21,8 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.zepp.www.rxjavaexample"
-        minSdkVersion 18
+        applicationId "com.binea.www.rxjavaexample"
+        minSdkVersion 24
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"

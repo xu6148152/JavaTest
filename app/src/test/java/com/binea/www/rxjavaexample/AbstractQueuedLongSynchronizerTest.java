@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 08/01/2017.
 //                            _ooOoo_  
@@ -23,6 +23,6 @@ package com.zepp.www.rxjavaexample;
 //         .............................................  
 //                  佛祖镇楼                  BUG辟易 
 
-public class AbstractQueuedLongSynchronizerTest extends TestBase {
+public class AbstractQueuedLongSynchronizerTest extends BaseTest {
 
 }

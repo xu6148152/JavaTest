@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 27/12/2016.
 //                            _ooOoo_  

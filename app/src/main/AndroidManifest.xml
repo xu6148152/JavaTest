@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.zepp.www.rxjavaexample">
+        package="com.binea.www.rxjavaexample">
 
     <application
             android:allowBackup="true"

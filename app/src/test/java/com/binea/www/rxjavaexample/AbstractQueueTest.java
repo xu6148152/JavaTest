@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 08/01/2017.
 //                            _ooOoo_  
@@ -30,7 +30,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AbstractQueueTest extends TestBase {
+public class AbstractQueueTest extends BaseTest {
     static class Succeed extends AbstractQueue<Integer> {
         Integer mElement = one;
 

@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 07/01/2017.
 //                            _ooOoo_  
@@ -47,7 +47,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-public class AbstractExecutorServiceTest extends TestBase {
+public class AbstractExecutorServiceTest extends BaseTest {
     /**
      * A no-frills implementation of AbstractExecutorService, designed
      * to test the submit methods only.

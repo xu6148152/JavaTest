@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 13/01/2017.
 //                            _ooOoo_  
@@ -24,6 +24,9 @@ package com.zepp.www.rxjavaexample;
 //                  佛祖镇楼                  BUG辟易 
 
 import android.annotation.SuppressLint;
+
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -35,7 +38,6 @@ import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.concurrent.atomic.AtomicStampedReference;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -43,7 +45,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-@SuppressLint("NewApi") public class AtomicTest extends TestBase {
+@SuppressLint("NewApi") public class AtomicTest extends BaseTest {
     static long addLong17(long x) {
         return x + 17;
     }

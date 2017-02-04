@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

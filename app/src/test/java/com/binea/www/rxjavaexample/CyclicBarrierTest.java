@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 06/01/2017.
 //                            _ooOoo_  
@@ -31,7 +31,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class CyclicBarrierTest extends TestBase {
+public class CyclicBarrierTest extends BaseTest {
 
     private volatile int countAction;
 

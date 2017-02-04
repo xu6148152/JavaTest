@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 05/01/2017.
 //                            _ooOoo_  
@@ -32,7 +32,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-@RunWith(MockitoJUnitRunner.class) public class CountDownLatchTest extends TestBase{
+@RunWith(MockitoJUnitRunner.class) public class CountDownLatchTest extends BaseTest {
 
     @Test public void testCountDownLatch() throws InterruptedException {
         BitSet bitSet = new BitSet();

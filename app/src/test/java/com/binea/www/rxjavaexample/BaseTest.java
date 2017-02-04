@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 06/01/2017.
 //                            _ooOoo_  
@@ -24,6 +24,9 @@ package com.zepp.www.rxjavaexample;
 //                  佛祖镇楼                  BUG辟易 
 
 import android.annotation.SuppressLint;
+
+import junit.framework.AssertionFailedError;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -37,9 +40,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
-import junit.framework.AssertionFailedError;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
@@ -50,7 +53,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class TestBase {
+public class BaseTest {
 
     public static final int LONG_DELAY_MS = 1000;
     public static final long MEDIUM_DELAY_MS = 1000;
@@ -151,7 +154,8 @@ public class TestBase {
     /**
      * Allows use of try-with-resources with per-test thread pools.
      */
-    @SuppressLint("NewApi") class PoolCleaner implements AutoCloseable {
+    @SuppressLint("NewApi")
+    class PoolCleaner implements AutoCloseable {
         private final ExecutorService pool;
 
         public PoolCleaner(ExecutorService pool) {
@@ -172,7 +176,7 @@ public class TestBase {
             if (!pool.awaitTermination(2 * LONG_DELAY_MS, MILLISECONDS)) {
                 try {
                     threadFail("ExecutorService " + pool +
-                                       " did not terminate in a timely manner");
+                            " did not terminate in a timely manner");
                 } finally {
                     // last resort, for the benefit of subsequent tests
                     pool.shutdownNow();
@@ -438,6 +442,67 @@ public class TestBase {
         } catch (Throwable fail) {
             threadUnexpectedException(fail);
             return new byte[0];
+        }
+    }
+
+    /**
+     * Checks that timed f.get() returns the expected value, and does not
+     * wait for the timeout to elapse before returning.
+     */
+    <T> void checkTimedGet(Future<T> f, T expectedValue, long timeoutMillis) {
+        long startTime = System.nanoTime();
+        try {
+            assertEquals(expectedValue, f.get(timeoutMillis, MILLISECONDS));
+        } catch (Throwable fail) {
+            threadUnexpectedException(fail);
+        }
+        if (millisElapsedSince(startTime) > timeoutMillis / 2)
+            throw new AssertionFailedError("timed get did not return promptly");
+    }
+
+    <T> void checkTimedGet(Future<T> f, T expectedValue) {
+        checkTimedGet(f, expectedValue, LONG_DELAY_MS);
+    }
+
+    /**
+     * Just like assertSame(x, y), but additionally recording (using
+     * threadRecordFailure) any AssertionFailedError thrown, so that
+     * the current testcase will fail.
+     */
+    public void threadAssertSame(Object x, Object y) {
+        try {
+            assertSame(x, y);
+        } catch (AssertionFailedError fail) {
+            threadRecordFailure(fail);
+            throw fail;
+        }
+    }
+
+    /**
+     * Just like assertNull(x), but additionally recording (using
+     * threadRecordFailure) any AssertionFailedError thrown, so that
+     * the current testcase will fail.
+     */
+    public void threadAssertNull(Object x) {
+        try {
+            assertNull(x);
+        } catch (AssertionFailedError t) {
+            threadRecordFailure(t);
+            throw t;
+        }
+    }
+
+    /**
+     * Just like assertTrue(b), but additionally recording (using
+     * threadRecordFailure) any AssertionFailedError thrown, so that
+     * the current testcase will fail.
+     */
+    public void threadAssertTrue(boolean b) {
+        try {
+            assertTrue(b);
+        } catch (AssertionFailedError t) {
+            threadRecordFailure(t);
+            throw t;
         }
     }
 }

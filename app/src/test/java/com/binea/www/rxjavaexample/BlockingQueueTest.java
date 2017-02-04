@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 11/01/2017.
 //                            _ooOoo_  
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-public abstract class BlockingQueueTest extends TestBase {
+public abstract class BlockingQueueTest extends BaseTest {
     /** Returns an empty instance of the implementation class. */
     protected abstract BlockingQueue emptyCollection();
 

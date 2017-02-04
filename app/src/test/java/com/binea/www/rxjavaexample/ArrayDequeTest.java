@@ -1,4 +1,4 @@
-package com.zepp.www.rxjavaexample;
+package com.binea.www.rxjavaexample;
 
 //  Created by xubinggui on 13/01/2017.
 //                            _ooOoo_  
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-public class ArrayDequeTest extends TestBase {
+public class ArrayDequeTest extends BaseTest {
     /**
      * Returns a new deque of given size containing consecutive
      * Integers 0 ... n.
